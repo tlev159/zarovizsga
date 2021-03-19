@@ -19,7 +19,7 @@ public class DogTypes {
 
   public List<String> getDogsByCountry(String country) {
     try (Connection conn = dataSource.getConnection();
-         PreparedStatement ps = conn.prepareStatement("SELECT name FROM dog_types WHERE country=?");
+         PreparedStatement ps = conn.prepareStatement("SELECT name FROM dog_types WHERE country=? ORDER BY name");
     ) {
       ps.setString(1, country.toUpperCase());
       ps.executeQuery();
