@@ -10,7 +10,6 @@ public class WorkHours {
   public String minWork(String file) {
     try (BufferedReader reader = Files.newBufferedReader(Path.of(file))) {
       String result = null;
-      String line;
       result = getMinWorkedDay(reader, result);
       return result;
     } catch (IOException ioe) {
