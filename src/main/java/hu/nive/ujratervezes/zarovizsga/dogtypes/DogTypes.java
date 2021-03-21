@@ -21,11 +21,6 @@ public class DogTypes {
 
   public List<String> getDogsByCountry(String country) {
     return jdbcTemplate.query("SELECT LOWER(name) AS name FROM dog_types WHERE LOWER(country)=? ORDER BY name", new Object[] {country},
-            new RowMapper<String>() {
-      @Override
-      public String mapRow(ResultSet rs, int i) throws SQLException {
-        return rs.getString("name");
-      }
-    });
+            (rs, i) -> rs.getString("name"));
   }
 }
