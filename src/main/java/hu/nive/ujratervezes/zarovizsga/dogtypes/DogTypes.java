@@ -1,6 +1,8 @@
 package hu.nive.ujratervezes.zarovizsga.dogtypes;
 
 import org.mariadb.jdbc.MariaDbDataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,45 +13,19 @@ import java.util.List;
 
 public class DogTypes {
 
-  private MariaDbDataSource dataSource;
+  private JdbcTemplate jdbcTemplate;
 
   public DogTypes(MariaDbDataSource dataSource) {
-    this.dataSource = dataSource;
+    this.jdbcTemplate = new JdbcTemplate(dataSource);
   }
 
   public List<String> getDogsByCountry(String country) {
-    try (Connection conn = dataSource.getConnection();
-         PreparedStatement ps = conn.prepareStatement("SELECT name FROM dog_types WHERE country=? ORDER BY name");
-    ) {
-      ps.setString(1, country.toUpperCase());
-      ps.executeQuery();
-
-      return findDogTypesInCountry(ps);
-
-    } catch (SQLException e) {
-      throw new IllegalStateException("Can not connect to datadase", e);
-    }
-  }
-
-  private List<String> findDogTypesInCountry(PreparedStatement ps) {
-    List<String> result = new ArrayList<>();
-    try (
-            ResultSet rs = ps.executeQuery();
-    ) {
-      while (rs.next()) {
-        result.add(rs.getString("name").toLowerCase());
+    return jdbcTemplate.query("SELECT LOWER(name) AS name FROM dog_types WHERE LOWER(country)=? ORDER BY name", new Object[] {country},
+            new RowMapper<String>() {
+      @Override
+      public String mapRow(ResultSet rs, int i) throws SQLException {
+        return rs.getString("name");
       }
-      return getDogTypes(result);
-    } catch (SQLException sqle) {
-      throw new IllegalArgumentException("Can not select", sqle);
-    }
-  }
-
-  private List<String> getDogTypes(List<String> result) {
-    if (result.size() == 0) {
-      throw new IllegalArgumentException("No result found");
-    } else {
-      return result;
-    }
+    });
   }
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mariadb.jdbc.MariaDbDataSource;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
